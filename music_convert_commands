@@ -1,0 +1,5 @@
+# Переконвертировать все ALAC(.m4a) файлы в директории <music_directory> в формат FLAC(.flac)
+find <music_directory> -name "*.m4a" -exec bash -c 'ffmpeg -i "$0" "${0%.m4a}.flac"' {} \;
+
+# Конвертировать все FLAC(.flac) файлы из директории <music_directory> в Ogg/Vorbis(.ogg) с качеством <quality=1.0..10.0>
+find <music_directory> -name "*.flac" -exec oggenc -q <quality> {} \;
