@@ -11,25 +11,15 @@ prepare()
 	ALBUM_TITLE=$(cueprint -d %T "$1")
 	echo "Album title: ${ALBUM_TITLE}"
 
-	# Создаем каталог <имя_исполнителя>, если он не существует
-	if [ ! -d "$2/${PERFORMER}" ]; then
-		mkdir -p "$2/${PERFORMER}"
-	fi
-
-	# Создаем подкаталог <год(если задан) - название_альбома>, если он не существует
 	YEAR="$3"
 	if [ -n "${YEAR}" ];
 	then
 		DESTDIR="$2/${PERFORMER}/${YEAR} - ${ALBUM_TITLE}"
-		if [ ! -d "${DESTDIR}" ]; then
-			mkdir -p "${DESTDIR}"
-		fi
 	else
 		DESTDIR="$2/${PERFORMER}/${ALBUM_TITLE}"
-		if [ ! -d "${DESTDIR}" ]; then
-			mkdir -p "${DESTDIR}"
-		fi
 	fi
+
+	mkdir -p "${DESTDIR}"
 }
 
 # Процедура convert разбивает .ape-файл на несколько .flac файлов

@@ -1,14 +1,28 @@
-#!/bin/bash
-file=${1/.flac/}
-qual=$2
-echo "   File: $file.flac"
-echo "Quality: $qual"
-title=`metaflac --show-tag="title" "$file.flac" | sed "s/title=//i"`
-artist=`metaflac --show-tag="artist" "$file.flac" | sed "s/artist=//i"`
-album=`metaflac --show-tag="album" "$file.flac" | sed "s/album=//i"`
-date=`metaflac --show-tag="date" "$file.flac" | sed "s/date=//i"`
-genre=`metaflac --show-tag="genre" "$file.flac" | sed "s/genre=//i"`
-track=`metaflac --show-tag="tracknumber" "$file.flac" | sed "s/tracknumber=//i"`
+#!/usr/bin/env bash
 
-flac -c -d "$file.flac" | oggenc -t "$title" -a "$artist" -G "$genre" -l "$album" \
- -d "$date" -n "$track" -o "$file".ogg -q "$qual" -
+File=${1/.flac/}
+Quality=$2
+
+echo "   File: ${File}.flac"
+echo "Quality: ${Quality}"
+
+getTag()
+{
+	eval tag=\$${1}
+	eval ${1}=`metaflac --show-tag="${tag}" "${2}" | sed s/${tag}=//i | sed "s/ /\\\\\ /g"`
+}
+
+Fields='Title Artist Album Date Genre Track'
+
+Title='title'
+Artist='artist'
+Album='album'
+Date='date'
+Genre='genre'
+Track='tracknumber'
+
+for Field in ${Fields}; do
+	getTag "${Field}" "${File}.flac"
+done
+
+flac -c -d "${File}.flac" | oggenc -t "${Title}" -a "${Artist}" -G "${Genre}" -l "${Album}" -d "${Date}" -N "${Track}" -o "${File}.ogg" -q "${Quality}" -
